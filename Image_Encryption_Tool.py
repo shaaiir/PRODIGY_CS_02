@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageFilter
 import numpy as np
 
 def print_heading():
@@ -6,7 +6,7 @@ def print_heading():
     heading = """
   ____        _ _                 
  |  _ \\  ___ | | | ___ _ __   __ _ 
- | | | |/ _ \\| | |/ _ \\ '_ \\ / _ |
+ | | | |/ _ \\| | |/ _ \\ '_ \\ / _` |
  | |_| | (_) | | |  __/ | | | (_| |
  |____/ \\___/|_|_|\\___|_| |_|\\__,_|
                                    
@@ -21,14 +21,21 @@ def xor_with_key(image_array, key):
     # Apply XOR operation to each pixel
     return np.bitwise_xor(image_array, key_array)
 
+def apply_blur(image):
+    """Apply a Gaussian blur to the image."""
+    return image.filter(ImageFilter.GaussianBlur(radius=5))  # Adjust radius as needed
+
 def encrypt_image(image_path, key):
-    """Encrypt the image located at image_path using the provided key."""
+    """Encrypt the image located at image_path using the provided key and apply blur."""
     try:
         # Open the image
         original_image = Image.open(image_path)
         
+        # Apply blur to the image
+        blurred_image = apply_blur(original_image)
+        
         # Convert image to NumPy array
-        image_array = np.array(original_image)
+        image_array = np.array(blurred_image)
 
         # Encrypt the image array
         encrypted_image_array = xor_with_key(image_array, key)
@@ -112,3 +119,4 @@ def handle_decryption():
 
 if __name__ == "__main__":
     main()
+
